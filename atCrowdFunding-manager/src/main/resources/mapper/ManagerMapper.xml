@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.rbac.mapper.ManagerMapper">
+    <!--会员注册-->
+    <insert id="insert4Register" parameterType="member">
+        insert into t_member values(null,#{username},#{password},#{email},#{type},#{createtime},#{updatetime});
+    </insert>
+    <!--根据用户名和邮箱查询用户信息-->
+    <select id="queryManagerByUsernameAndEmail" parameterType="string" resultType="member">
+        select * from t_member where username=#{username} or email=#{email}
+    </select>
+    <!-- 登陆查询数据库 -->
+    <select id="query4Login" parameterType="member" resultType="member">
+        select * from t_member where username=#{username} and password=#{password}
+    </select>
+</mapper>

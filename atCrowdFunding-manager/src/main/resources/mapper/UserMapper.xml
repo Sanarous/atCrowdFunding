@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.rbac.mapper.UserMapper">
+    <!-- 查询所有的user信息 -->
+    <select id="queryAllUsers" parameterType="java.lang.String" resultType="user">
+        select * from t_user
+         <where>
+            <if test="queryText != null">
+                and username like concat('%',#{queryText},'%')
+            </if>
+         </where>
+         order by id desc
+    </select>
+    <!-- 添加user信息 -->
+    <insert id="addUser" parameterType="user">
+        insert into t_user values(null,#{username},#{password},#{name},#{email},#{createtime},#{updatetime})
+    </insert>
+    <!-- 编辑用户信息 -->
+    <update id="updateUser" parameterType="user">
+        update t_user
+        set username = #{username},`name` = #{name}, email = #{email}, updatetime = #{updatetime}
+        where id = #{id}
+    </update>
+    <!-- 根据用户id查询用户信息 -->
+    <select id="getUserById" parameterType="int" resultType="user">
+        select * from t_user where id=#{id}
+    </select>
+    <!-- 删除用户信息 -->
+    <delete id="deleteUserById" parameterType="int">
+        delete from t_user where id=#{id}
+    </delete>
+    <!-- 批量删除用户信息 -->
+    <delete id="deleteUsers" parameterType="integer[]">
+        delete from t_user where id in
+        <foreach collection="userid" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+    <!-- 分配角色 -->
+    <insert id="insertUserRole" parameterType="integer">
+        insert into t_user_role values
+      <foreach collection="unassignroleids" item="roleid" separator=",">
+          (null,#{userid},#{roleid})
+      </foreach>
+    </insert>
+    <!-- 取消分配角色 -->
+    <delete id="deleteUserRoles" parameterType="integer">
+        delete from t_user_role where userid = #{userid} and roleid in
+        <foreach collection="assignroleids" item="roleid" open="(" close=")" separator=",">
+            #{roleid}
+        </foreach>
+    </delete>
+    <!-- 根据userid查询roleid -->
+    <select id="queryRoleidsByUserid" parameterType="int" resultType="int">
+        select roleid from t_user_role where userid=#{userid}
+    </select>
+</mapper>
